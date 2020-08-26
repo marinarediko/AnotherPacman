@@ -10,7 +10,7 @@ namespace AnotherPacman
 {
     class Food : PictureBox
     {
-        private int Type { get; set; } = 1;
+        public int Type { get; set; } = 1;
 
         public Food()
         {
