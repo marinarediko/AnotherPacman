@@ -16,12 +16,45 @@ namespace AnotherPacman
         public string Direction { get; set; } = "right";
 
         private Timer animationTimer = null;
+        private Timer pacmanMeltTimer = null;
         private int frameCounter = 1;
 
         public Hero()
         {
             InitializeHero();
             InitializeAnimationTimer();
+        }
+
+        public void Melt()
+        {
+            animationTimer.Stop();
+            frameCounter = 1;
+            InitializePacmanMeltTimer();
+        }
+        private void InitializePacmanMeltTimer()
+        {
+            pacmanMeltTimer = new Timer();
+            this.SizeMode = PictureBoxSizeMode.StretchImage;
+            pacmanMeltTimer.Tick += PacmanMeltTimer_Tick;
+            pacmanMeltTimer.Interval = 100;
+            pacmanMeltTimer.Start();
+        }
+
+        private void PacmanMeltTimer_Tick(object sender, EventArgs e)
+        {
+            MeltAnimate();
+        }
+
+        private void MeltAnimate()
+        {
+            string imageName = "pacman_melt_" + frameCounter.ToString();
+            this.Image = (Image)Properties.Resources.ResourceManager.GetObject(imageName);
+            
+            frameCounter++;
+            if (frameCounter > 14)
+            {
+                pacmanMeltTimer.Stop();
+            }
         }
 
         private void InitializeAnimationTimer()

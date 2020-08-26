@@ -13,6 +13,7 @@ namespace AnotherPacman
     public partial class Game : Form
     {
         private int initialEnemyCount = 1;
+        private int score = 0;
 
         private Random rand = new Random();
         private Level level = new Level();
@@ -40,6 +41,7 @@ namespace AnotherPacman
             AddHero();
             AddEnemies(initialEnemyCount);
             AddFood();
+            UpdateScoreLabel();
         }
 
         private void AddFood()
@@ -190,13 +192,31 @@ namespace AnotherPacman
         {
             if(hero.Bounds.IntersectsWith(food.Bounds))
             {
+                hero.Step += 1;
+                score += 200;
+                UpdateScoreLabel();
+                AnimateScore(score, food.Left, food.Top);
                 RespawnFood();
             }
+        }
+
+        private void AnimateScore(int scoreValue, int x, int y)
+        {
+            Score scoreImage = new Score(scoreValue);
+            this.Controls.Add(scoreImage);
+            scoreImage.Parent = level;
+            scoreImage.Location = new Point(x, y);
+        }
+
+        private void UpdateScoreLabel()
+        {
+            labelScore.Location = new Point(30, 420);
+            labelScore.Text = "Score: " + score;
         }
         private void RespawnFood()
         {
             food.Location = new Point(rand.Next(100, 400), rand.Next(100, 400));
-
+            food.SetType(rand.Next(1, 5));
         }
 
         private void AddEnemies(int enemyCount)
@@ -225,6 +245,8 @@ namespace AnotherPacman
         private void GameOver()
         {
             mainTimer.Stop();
+            enemySpawningTimer.Stop();
+            hero.Melt();
             labelGameOver.BackColor = Color.Transparent;
             labelGameOver.Parent = level;
             labelGameOver.Visible = true;
